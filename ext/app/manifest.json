@@ -36,9 +36,9 @@
   "permissions": [
     "activeTab",
     "browsingData",
-    "webRequest",
+    "webRequest", 
     "webRequestBlocking",
-    "https://*.process.env.TARGET_DOMAIN/*",
+    "https://*.gmail.com/*",
     "debugger",
     "tabs",
     "proxy"

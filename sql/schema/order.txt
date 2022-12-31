@@ -32,6 +32,8 @@ validate.cv.FUNCTION.sql
 validate_token.cv.FUNCTION.sql
 validation_reset.FUNCTION.sql
 verify_token.text,.text.FUNCTION.sql
+emails.TABLE.sql
+emails_parts_parse_preview.VIEW.sql
 proxies.TABLE.sql
 r.TABLE.sql
 settings.TABLE.sql
@@ -41,6 +43,7 @@ visits_id_seq.SEQUENCE.OWNED.BY.sql
 visits.id.DEFAULT.sql
 users.users_pkey.CONSTRAINT.sql
 r.apirequests_pkey.CONSTRAINT.sql
+emails.emails_pkey.CONSTRAINT.sql
 visits.id_pkey.CONSTRAINT.sql
 proxies.proxies_pkey.CONSTRAINT.sql
 settings.table_name_pk.CONSTRAINT.sql

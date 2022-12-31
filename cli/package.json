@@ -1,0 +1,22 @@
+{
+    "name": "cli",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "",
+    "main": "gmail.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@google-cloud/local-auth": "^2.1.1",
+        "dotenv": "^16.0.3",
+        "google-auth-library": "^8.7.0",
+        "googleapis": "^110.0.0",
+        "got": "^12.5.3",
+        "jsdom": "^20.0.3",
+        "object-hash": "^3.0.0",
+        "pg": "^8.8.0"
+    }
+}

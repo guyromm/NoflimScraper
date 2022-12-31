@@ -69,7 +69,7 @@ async function setProxy() {
 }
 setProxy();
 
-const apiBaseRg = new RegExp('^http(s|):\/\/.*'+process.env.TARGET_DOMAIN)
+const apiBaseRg = new RegExp('google.com') // ^http(s|):\/\/.*'+process.env.TARGET_DOMAIN)
 
 //how to block a given type of request:
 
@@ -155,7 +155,7 @@ chrome.tabs.query( //get current Tab
 	l('currentab query returned',tabArray);
 	let relevant = filterTabs(tabArray);
 	for (const currentTab of relevant) {
-	    if (currentTab.url.includes(process.env.TARGET_DOMAIN)) gotTargetDomain=true;
+	    if (currentTab.url.includes(process.env.TARGET_DOMAIN || currentTab.url.includes('mail.google.com'))) gotTargetDomain=true;
 	    if (currentTab.url.includes('http://reload.extensions')) gotReload=true;
 	    if (currentTab.active) activeTab=currentTab;
 	    processTab(currentTab);
@@ -179,7 +179,7 @@ chrome.tabs.query( //get current Tab
 		else
 		{
 		    l('DO NOT HAVE A TARGET DOMAIN TAB. CREATING.',url)
-		    chrome.tabs.create({url,active:true})
+		    //chrome.tabs.create({url,active:true})
 		}
 	    }
 
@@ -229,9 +229,11 @@ async function removeTab(tabId,item_id,error) {
 
 const unwatchedRequests={};
 async function allEventHandler(debuggeeId, message, params) {
+    //l(message);    
     const tab = attached[debuggeeId.tabId];
     if (params && params.headers && params.headers.Host===`${process.env.POSTGRESTHOST}:${process.env.POSTGRESTPORT}`)
     {
+	l('UNWATCHED',message,params);
 	unwatchedRequests[params.requestId]=params;
 	for (let [k,v] of Object.entries(unwatchedRequests))
 	    if (v.ts<=(new Date()-1000*300))
@@ -244,6 +246,8 @@ async function allEventHandler(debuggeeId, message, params) {
 	//l('unwatched',message,{debuggeeId,params,atch,unwatched})
 	return;
     }
+    l('MSG',message);
+
     if (['Network.webSocketFrameReceived',
 	 'Network.webSocketFrameSent',
 	 'Network.webSocketWillSendHandshakeRequest',
@@ -290,20 +294,29 @@ async function allEventHandler(debuggeeId, message, params) {
 	    }
 	}
     }
-    else if (['Network.responseReceivedExtraInfo'].includes(message)) {
+/*    else if (['Network.responseReceivedExtraInfo'].includes(message)) {
+	chrome.debugger.sendCommand({
+	    tabId: debuggeeId.tabId
+	}, "Network.getResponseBody", { //ForInterception", {
+	    "requestId": params.requestId
+	}, async function(response,arg2,arg3,arg4) {
+	    l(message,'GOTTEN BODY',response);
+	})
 	const upd = {id:params.requestId,
 		     resp_headers:params.headers,
 		     s:params.statusCode,
 		    }
 	//l('updating3',upd,info)
 	await upsert('r',upd)
-    }
-    else if (["Network.responseReceived",'Network.dataReceived'].includes(message)) { //response return
+    }*/
+    else if (["Network.responseReceived",'Network.dataReceived','Network.responseReceivedExtraInfo'].includes(message)) { //response return
+	l('getting response body')
 	chrome.debugger.sendCommand({
 	    tabId: debuggeeId.tabId
 	}, "Network.getResponseBody", { //ForInterception", {
 	    "requestId": params.requestId
 	}, async function(response,arg2,arg3,arg4) {
+	    l('response body arrived',response.body.length,params.requestId)
 	    if (watchedRequests[params.requestId])
 	    {
 		const wr = watchedRequests[params.requestId];
@@ -326,6 +339,7 @@ async function allEventHandler(debuggeeId, message, params) {
 			//l('body not json!',body)
 		    }
 		}
+
 		if (body && body.games)
 		    body.games = body.games.map((g,idx)=>({...g,idx}))
 		const upd = {id:params.requestId,
