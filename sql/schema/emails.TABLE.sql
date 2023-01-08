@@ -4,7 +4,7 @@
 CREATE TABLE public.emails (
     id character varying NOT NULL,
     subject character varying,
-    "from" character varying,
+    sender character varying,
     date timestamp with time zone,
     ts timestamp with time zone DEFAULT now(),
     body jsonb,

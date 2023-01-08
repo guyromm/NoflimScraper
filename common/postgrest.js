@@ -1,8 +1,7 @@
 //import fetch from 'node-fetch'
 import jwt_decode from 'jwt-decode'
 import qs from 'qs'
-//import {postfix} from './funcs.js';
-const postfix='';
+import {postfix} from './funcs.js';
 const l = console.log
 
 export const isnode = () =>
@@ -10,8 +9,7 @@ export const isnode = () =>
   process.release &&
   process.release.name === 'node'
 
-
-export const DB = process.env.POSTGREST_BASE_URI;
+export const DB = import.meta.env.VITE_POSTGREST_BASE_URI
 
 export const hdrs = { 'Content-Type': 'application/json' }
 
@@ -36,7 +34,7 @@ export async function login(
   const pth = '/rpc/' + mode
   const furl =
     DB +
-	(process.env.POSTGREST_PATH_AS_ARG
+    (import.meta.env.VITE_POSTGREST_PATH_AS_ARG
       ? '?_path=' + encodeURIComponent(pth)
       : pth)
   let res = await f(furl, {
@@ -54,7 +52,7 @@ export async function login(
       throw new Error('wrong length returned by login response.')
   } catch (err) {
     l('error obtaining json from res', err)
-    l('login1 error is', txt)
+    l('login error is', txt)
     //throw err;
     let cause =
       txt && txt.includes('already exists') ? 'user exists' : 'unknown'
@@ -85,7 +83,7 @@ export async function authLogic(rta) {
   } else if (CFG.login && CFG.pass) {
       //l('got a login/password in config.');
       const pth = '/rpc/login';
-      const lurl = DB + (process.env.POSTGREST_PATH_AS_ARG?'?_path='+encodeURIComponent(pth):pth)
+      const lurl = DB + (import.meta.env.VITE_POSTGREST_PATH_AS_ARG?'?_path='+encodeURIComponent(pth):pth)
     let res = await fetch(lurl, {
       method: 'POST',
       headers: hdrs,
@@ -93,17 +91,18 @@ export async function authLogic(rta) {
     })
     let txt, json
     try {
-	txt = await res.text()
+      txt = await res.text()
       json = JSON.parse(txt)
-      if (json && json.token) {
-        CFG.JWT_TOKEN = cookie = json.token
+      if (json.length) {
+        l('assigning a new token from json', json)
+        CFG.JWT_TOKEN = cookie = json[0].token
       } else {
         l(json)
         throw new Error('could not find token in auth response')
       }
     } catch (err) {
       l('error obtaining json from res', err)
-      l('login2 error is', txt)
+      l('login error is', txt)
       throw err
     }
   } else {
@@ -139,8 +138,8 @@ export async function webAuthLogic() {
 
 export async function cliAuthLogic() {
   setConfig({
-      login: process.env.POSTGREST_CLI_LOGIN,
-      pass: process.env.POSTGREST_CLI_PASS,
+    login: import.meta.env.VITE_POSTGREST_CLI_LOGIN,
+    pass: import.meta.env.VITE_POSTGREST_CLI_PASS,
   })
   return await authLogic()
 }
@@ -228,7 +227,7 @@ export function getAuthData(tok) {
 export async function del(path, conds = {}) {
     if (!Object.entries(conds).length) throw new Error('conds is empty.')
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl = DB + '/' + '?' + qs.stringify({...conds,_path:path});
     else
 	furl = DB + '/' + path + '?' + qs.stringify(conds);
@@ -259,7 +258,7 @@ export async function update(path, doc, errok, key = ['id']) {
     let updurl;
     let cond;
     
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
     {
 	cond = qs.stringify({...keys,_path:path});
 	updurl = DB + '/' + '?' + cond
@@ -323,7 +322,7 @@ export async function insert(path, obj, errok, headersOverride = {}) {
   let h = { ...(await getHeaders()), ...headersOverride }
     //l('using headers',h);
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl = DB + '/?_path=' + encodeURIComponent(path);
     else
 	furl = DB + '/' + path;
@@ -343,7 +342,7 @@ export async function select(path, args) {
   if (!DB) throw new Error('DB not defined.')
     let h = await getHeaders()
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl = DB + '/' + '?' + qs.stringify({...args,_path:path});
     else
 	furl = DB + '/' + path + '?' + qs.stringify(args);
@@ -400,7 +399,7 @@ export async function selectOne(path, args, errOk = false) {
 
 export async function pass_reset(email) {
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl=`${DB}?_path=/rpc/pass_reset`;
     else
 	furl = `${DB}/rpc/pass_reset`;
@@ -413,7 +412,7 @@ export async function pass_reset(email) {
 
 export async function pass_reset_new(obj) {
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl = `${DB}?_path=/rpc/pass_reset_new`
     else
 	furl = `${DB}/rpc/pass_reset_new`;
@@ -428,7 +427,7 @@ export async function validateByToken(token, authData) {
   l('validateByToken', token, authData)
     if (token) {
 	let furl;
-	if (process.env.POSTGREST_PATH_AS_ARG)
+	if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	    furl = DB + '?_path=/rpc/validate_token';
 	else
 	    furl = DB + '/rpc/validate_token';
@@ -449,7 +448,7 @@ export async function validateByToken(token, authData) {
 export async function validationReset() {
     let h = await getHeaders()
     let furl;
-    if (process.env.POSTGREST_PATH_AS_ARG)
+    if (import.meta.env.VITE_POSTGREST_PATH_AS_ARG)
 	furl = `${DB}?_path=/rpc/validation_reset`;
     else
 	furl = `${DB}/rpc/validation_reset`;

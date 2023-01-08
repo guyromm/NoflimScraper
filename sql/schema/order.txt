@@ -34,6 +34,8 @@ validation_reset.FUNCTION.sql
 verify_token.text,.text.FUNCTION.sql
 emails.TABLE.sql
 emails_parts_parse_preview.VIEW.sql
+emails_digest.VIEW.sql
+openai.TABLE.sql
 proxies.TABLE.sql
 r.TABLE.sql
 settings.TABLE.sql
@@ -45,6 +47,7 @@ users.users_pkey.CONSTRAINT.sql
 r.apirequests_pkey.CONSTRAINT.sql
 emails.emails_pkey.CONSTRAINT.sql
 visits.id_pkey.CONSTRAINT.sql
+openai.openai_pkey.CONSTRAINT.sql
 proxies.proxies_pkey.CONSTRAINT.sql
 settings.table_name_pk.CONSTRAINT.sql
 users.encrypt_pass.TRIGGER.sql
@@ -57,6 +60,8 @@ FUNCTION.user_delete.email.cv.ACL.sql
 FUNCTION.user_insert.email.cv.ACL.sql
 FUNCTION.validate.email.cv.ACL.sql
 FUNCTION.verify_token.token.text,.algorithm.text.ACL.sql
+TABLE.emails_parts_parse_preview.ACL.sql
+TABLE.emails_digest.ACL.sql
 TABLE.r.ACL.sql
 TABLE.settings.ACL.sql
 TABLE.visits.ACL.sql

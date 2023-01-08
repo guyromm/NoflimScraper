@@ -5,7 +5,7 @@ session="$APPNAME"
 
 function ti() {
     #tmux -d "$@" -s $session
-    tmux new-session -d -s $session
+    tmux -u new-session -d -s $session
 }
 
 function t() {
