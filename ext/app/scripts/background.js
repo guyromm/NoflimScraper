@@ -1,5 +1,13 @@
-import {setConfig,cliAuthLogic,select,selectOne,insert,update,del,upsert} from '../../../common/postgrest.js';
-import {sleep,DEBUGGER_ATTACH,whatsNext} from './funcs.js';
+import {setConfig,
+	cliAuthLogic,
+	select,
+	selectOne,
+	insert,
+	update,
+	del,
+	upsert}
+from '../../../common/postgrest-cli.js';
+import {sleep,DEBUGGER_ATTACH,whatsNext,visitNewHashtag} from './funcs.js';
 
 setConfig({authLogic:cliAuthLogic})
 
@@ -16,6 +24,7 @@ const callback = (arg1,arg2) => {
 }
 const COLLECTION_ON=true;
 const CAPTCHA_SOLVING_ON=true;
+
 
 function px(port) {
     return {
@@ -69,7 +78,11 @@ async function setProxy() {
 }
 setProxy();
 
-const apiBaseRg = new RegExp('google.com') // ^http(s|):\/\/.*'+process.env.TARGET_DOMAIN)
+
+// test change 1
+
+const pat = '(linkedin.com)'
+const apiBaseRg = new RegExp(pat)
 
 //how to block a given type of request:
 
@@ -119,7 +132,8 @@ const sendMessage = (tabId,message,options,responseCallback) => {
 
 const processTab = async (currentTab) => {
   if (DEBUGGER_ATTACH && !attached[currentTab.id])
-  {
+    {
+	//reloader()	
     l('attaching debugger to tab',currentTab);
     chrome.debugger.attach({ //debug at current tab
       tabId: currentTab.id
@@ -165,8 +179,12 @@ chrome.tabs.query( //get current Tab
 
 	    await cleanData()
 	    const url = 'https://www.'+process.env.TARGET_DOMAIN+'/';
-	    const toCol = await whatsNext(true);
-	    const urls = [toCol,url];
+	    //const toCol = await whatsNext(true);
+	    const urls = [await visitNewHashtag(true),
+			  await visitNewHashtag(true),
+			  await visitNewHashtag(true),
+			  await visitNewHashtag(true),
+			 ];
 	    l('urls=',urls);
 	    for (const url of urls)
 	    {
@@ -179,7 +197,8 @@ chrome.tabs.query( //get current Tab
 		else
 		{
 		    l('DO NOT HAVE A TARGET DOMAIN TAB. CREATING.',url)
-		    //chrome.tabs.create({url,active:true})
+		    chrome.tabs.create({url,active:true})
+		    //await sleep(10000);
 		}
 	    }
 
@@ -233,7 +252,7 @@ async function allEventHandler(debuggeeId, message, params) {
     const tab = attached[debuggeeId.tabId];
     if (params && params.headers && params.headers.Host===`${process.env.POSTGRESTHOST}:${process.env.POSTGRESTPORT}`)
     {
-	l('UNWATCHED',message,params);
+	//l('UNWATCHED',message,params);
 	unwatchedRequests[params.requestId]=params;
 	for (let [k,v] of Object.entries(unwatchedRequests))
 	    if (v.ts<=(new Date()-1000*300))
@@ -273,6 +292,7 @@ async function allEventHandler(debuggeeId, message, params) {
 	if (apiBaseRg.exec(params.request.url) &&
 	    !params.request.url.includes(`${process.env.POSTGRESTHOST}:${process.env.POSTGRESTPORT}`))
 	{
+	    l('GOING TO WATCH',debuggeeId,url)
 	    watchedRequests[params.requestId]={'request':params.request};
 	    const insargs = {request:params.request,
 			     page_url:t.url,
@@ -316,10 +336,11 @@ async function allEventHandler(debuggeeId, message, params) {
 	}, "Network.getResponseBody", { //ForInterception", {
 	    "requestId": params.requestId
 	}, async function(response,arg2,arg3,arg4) {
-	    l('response body arrived',response.body.length,params.requestId)
+	    l('response body arrived',response && response.body?response.body.length:undefined,params.requestId)
 	    if (watchedRequests[params.requestId])
 	    {
 		const wr = watchedRequests[params.requestId];
+		l('THE BODY THAT ARRIVED BELONGS TO A WATCHED REQUST ON',wr.request.url);
 		//l('resp',message,wr.request.url,':',Object.keys(response),arg2,arg3,arg4) // wr.response,'entire obj is',wr,'arg2',arg2,'arg3',arg3);	
 		wr.response=response;
 		//if (wr.request.url.includes('additionalinfo'))
@@ -349,6 +370,8 @@ async function allEventHandler(debuggeeId, message, params) {
 			     ts_resp:new Date()}
 		await upsert('r',upd);
 	    }
+	    else
+		l('BODY',params,'not in watchedRequests')
 	});
     }
     else if (message==='Network.requestServedFromCache')
@@ -393,6 +416,18 @@ async function cleanData() {
 };
 
 const visits={};
+async function reloader() {
+    l('reloader')
+    while (true) {
+	l('reloader sleeping')
+	await sleep(5000);
+	l('reloading ext')
+
+	chrome.runtime.reload();
+    }
+}
+//setTimeout(() => chrome.runtime.reload(),1000)
+
 chrome.runtime.onMessage.addListener(async (req,sender,resp) => {
   const t = sender.tab;  
     if (req.message==='visit') {

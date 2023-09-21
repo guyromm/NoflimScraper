@@ -11,14 +11,9 @@ export const isnode = () =>
   process.release.name === 'node'
 
 
-function E(n) {
 
-  let rt;
-  rt= import.meta.env['VITE_'+n];
-  return rt;
-}
 
-export const DB = E("POSTGREST_BASE_URI");
+export const DB = process.env.POSTGREST_BASE_URI;
 
 export const hdrs = { 'Content-Type': 'application/json' }
 
@@ -44,7 +39,7 @@ export async function login(
   const pth = '/rpc/' + mode
   const furl =
     DB +
-	(E("POSTGREST_PATH_AS_ARG")
+	(process.env.POSTGREST_PATH_AS_ARG
       ? '?_path=' + encodeURIComponent(pth)
 	 : pth)
   let res = await f(furl, {
@@ -93,7 +88,8 @@ export async function authLogic(rta) {
   } else if (CFG.login && CFG.pass) {
       //l('got a login/password in config.');
     const pth = '/rpc/login';
-      const lurl = DB + (E("POSTGREST_PATH_AS_ARG")?'?_path='+encodeURIComponent(pth):pth)
+    l({DB,pth})
+      const lurl = DB + (process.env.POSTGREST_PATH_AS_ARG?'?_path='+encodeURIComponent(pth):pth)
     let res = await fetch(lurl, {
       method: 'POST',
       headers: hdrs,
@@ -149,8 +145,8 @@ export async function webAuthLogic() {
 
 export async function cliAuthLogic() {
   setConfig({
-      login: E("POSTGREST_CLI_LOGIN"),
-      pass: E("POSTGREST_CLI_PASS"),
+      login: getCookie('api_login'), // process.env.POSTGREST_CLI_LOGIN,
+      pass: getCookie('api_pass'), // process.env.POSTGREST_CLI_PASS,
   })
   return await authLogic()
 }
@@ -238,7 +234,7 @@ export function getAuthData(tok) {
 export async function del(path, conds = {}) {
     if (!Object.entries(conds).length) throw new Error('conds is empty.')
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl = DB + '/' + '?' + qs.stringify({...conds,_path:path});
     else
 	furl = DB + '/' + path + '?' + qs.stringify(conds);
@@ -269,7 +265,7 @@ export async function update(path, doc, errok, key = ['id']) {
     let updurl;
     let cond;
     
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
     {
 	cond = qs.stringify({...keys,_path:path});
 	updurl = DB + '/' + '?' + cond
@@ -336,7 +332,7 @@ export async function insert(path, obj, errok, headersOverride = {}) {
   let h = { ...(await getHeaders()), ...headersOverride }
     //l('using headers',h);
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl = DB + '/?_path=' + encodeURIComponent(path);
     else
 	furl = DB + '/' + path;
@@ -356,7 +352,7 @@ export async function select(path, args) {
   if (!DB) throw new Error('DB not defined.')
     let h = await getHeaders()
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl = DB + '/' + '?' + qs.stringify({...args,_path:path});
     else
 	furl = DB + '/' + path + '?' + qs.stringify(args);
@@ -413,7 +409,7 @@ export async function selectOne(path, args, errOk = false) {
 
 export async function pass_reset(email) {
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl=`${DB}?_path=/rpc/pass_reset`;
     else
 	furl = `${DB}/rpc/pass_reset`;
@@ -426,7 +422,7 @@ export async function pass_reset(email) {
 
 export async function pass_reset_new(obj) {
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl = `${DB}?_path=/rpc/pass_reset_new`
     else
 	furl = `${DB}/rpc/pass_reset_new`;
@@ -441,7 +437,7 @@ export async function validateByToken(token, authData) {
   l('validateByToken', token, authData)
     if (token) {
 	let furl;
-	if (E("POSTGREST_PATH_AS_ARG"))
+	if (process.env.POSTGREST_PATH_AS_ARG)
 	    furl = DB + '?_path=/rpc/validate_token';
 	else
 	    furl = DB + '/rpc/validate_token';
@@ -462,7 +458,7 @@ export async function validateByToken(token, authData) {
 export async function validationReset() {
     let h = await getHeaders()
     let furl;
-    if (E("POSTGREST_PATH_AS_ARG"))
+    if (process.env.POSTGREST_PATH_AS_ARG)
 	furl = `${DB}?_path=/rpc/validation_reset`;
     else
 	furl = `${DB}/rpc/validation_reset`;
