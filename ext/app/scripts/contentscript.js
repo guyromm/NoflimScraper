@@ -1,4 +1,4 @@
-import {setConfig,cliAuthLogic,select,upsert,selectOne,insert,update,del} from '../../../common/postgrest.js';
+import {setConfig,cliAuthLogic,select,upsert,selectOne,insert,update,del} from '../../../common/postgrest-cli.js';
 import {sleep,DEBUGGER_ATTACH,nextLiveFeed} from './funcs.js';
 import html2canvas from 'html2canvas';
 const l = (...a) => console.log('WN',...a);

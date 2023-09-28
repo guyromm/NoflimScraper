@@ -81,7 +81,7 @@ setProxy();
 
 // test change 1
 
-const pat = '(linkedin.com)'
+const pat = '('+process.env.TARGET_DOMAIN+')'
 const apiBaseRg = new RegExp(pat)
 
 //how to block a given type of request:

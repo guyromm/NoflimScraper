@@ -145,8 +145,8 @@ export async function webAuthLogic() {
 
 export async function cliAuthLogic() {
   setConfig({
-      login: getCookie('api_login'), // process.env.POSTGREST_CLI_LOGIN,
-      pass: getCookie('api_pass'), // process.env.POSTGREST_CLI_PASS,
+      login: process.env.POSTGREST_CLI_LOGIN, // getCookie('api_login'),
+      pass: process.env.POSTGREST_CLI_PASS, // getCookie('api_pass'), // 
   })
   return await authLogic()
 }
