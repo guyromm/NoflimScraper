@@ -40,20 +40,20 @@ echo '* creating session' && \
     ti && \
 	echo '* creating window postgrest' && \
 	    t rename-window -t "$session.0" "postgrest" && \
-	    tsk postgrest 'source .env ; export DBURI ; export POSTGRESTPORT ; export JWTSECRET ; [[ ! -z "$POSTGRESTPORT" ]] && postgrest postgrest.conf || echo "no POSTGRESTPORT provided"' && \
+	    tsk postgrest ' source .env ; export DBURI ; export POSTGRESTPORT ; export JWTSECRET ; [[ ! -z "$POSTGRESTPORT" ]] && postgrest postgrest.conf || echo "no POSTGRESTPORT provided"' && \
     echo '* app' && \
     tnw ext && \
-    tsk ext "nvm use && cd ext ; npm start" && \
+    tsk ext " nvm use && cd ext ; npm start" && \
     echo '* brw' && \
     tnw brw && \
-    tsk brw "source .env && export DISPLAY=$DISPLAY && ./monitor_chrome.sh" && \
+    tsk brw " source .env && export DISPLAY=$DISPLAY && ./monitor_chrome.sh" && \
     echo '* mon' && \
     tnw mon && \
-    tsk mon "watch -d -n60 "'"'"./psql.sh -c 'select ts::date d,count(*) from r group by d order by d desc'"'"'"" && \
+    tsk mon " watch -d -n60 "'"'"./psql.sh -c 'select ts::date d,count(*) from r group by d order by d desc'"'"'"" && \
     ( [[ ! -z $POSTGREST_PROXY_PORT ]] && (
 	  echo '* postgrest_proxy' && \
 	      tnw pgproxy && \
-	      tsk pgproxy "source .env && mitmdump -p $POSTGREST_PROXY_PORT -w mitm.log --mode reverse:$(echo $POSTGREST_BASE_URI | sed -E 's/\/default\/testicle//g')"
+	      tsk pgproxy " source .env && mitmdump -p $POSTGREST_PROXY_PORT -w mitm.log --mode reverse:$(echo $POSTGREST_BASE_URI | sed -E 's/\/default\/testicle//g')"
 	  ) || echo '* postgrest proxy disabled')
 }
 function attach() {
