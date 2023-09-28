@@ -1,4 +1,4 @@
-import {selectOne} from '../../../common/postgrest.js';
+import {selectOne} from '../../../common/postgrest-cli.js';
 const l = console.log;
 
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
