@@ -7,7 +7,7 @@ mkdir -p sql/schema && \
     pg_dump --schema-only --no-owner $DBURI > $SCHEMAFN && \
     cd sql/schema/ && \
     (rm * ||:) && \
-    csplit $SCHEMAFN -f '' -b '%02d' '/^\-\- Name: .*/' '{*}' && \
+    gcsplit $SCHEMAFN -f '' -b '%02d' '/^\-\- Name: .*/' '{*}' && \
     for FN in `ls -1v *` ; do
 	echo $FN
         NF="$(egrep -o "Name: ([^;]+); Type: ([^;]+)" $FN  | sed -E 's/(Name: |Type: |; |\(|\)| )/./g' | sed -E 's/(\.+)/./g' | sed -E 's/$/.sql/' | sed -E "s/^\.//g" | sed -E 's/character\.varying([^\.]*)\./cv\./g' | sed -E 's/timestamp.with.time.zone/tstz/g')";
@@ -28,5 +28,8 @@ echo '* reconstructing'
 cd sql/schema && (echo 00 ; cat order.txt) | xargs cat  > $RSCHEMAFN ; 
 diff -Nuar $SCHEMAFN $RSCHEMAFN || (echo "DUMPS $SCHEMAFN && $RSCHEMAFN NOT EQUAL!" ; exit 2) &&
    echo '* erasing monodumps' && \
-	rm $SCHEMAFN $RSCHEMAFN
+       rm $SCHEMAFN $RSCHEMAFN && \
+       echo '* rewriting views' && \
+       sed -E -i 's/^CREATE VIEW/CREATE OR REPLACE VIEW/g' *sql && \
+       echo '* all done!'
 cd - 
