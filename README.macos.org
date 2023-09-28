@@ -1,10 +1,11 @@
-* system-level dependencies
+* system wide, do these once
+** system-level dependencies
 #+BEGIN_SRC bash
 brew install postgresql tmux nvm coreutils postgrest watch jq
 #+END_SRC
-* pgjwt
+** pgjwt
 git clone https://github.com/michelp/pgjwt && cd pgjwt && sudo make install
-* nvm:
+** nvm:
 #+BEGIN_SRC bash
 mkdir ~/.nvm
 echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
@@ -30,8 +31,7 @@ execute the following under _bash_!
   source .env
   echo 'DBNAME:'$DBNAME
   ./db_init.sh
-#+END_SR
-C
+#+END_SRC
 * launch
 #+BEGIN_SRC bash
 ./tmux.sh
