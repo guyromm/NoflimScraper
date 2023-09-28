@@ -9,7 +9,6 @@ git clone https://github.com/michelp/pgjwt && cd pgjwt && sudo make install
 mkdir ~/.nvm
 echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
 echo '[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"' >> ~/.zshrc
-echo '[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"'  >> ~/.zshrc
 #+END_SRC
 * project repository && node dependencies
 #+BEGIN_SRC bash
