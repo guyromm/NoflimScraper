@@ -1,7 +1,7 @@
 * system wide, do these once
 ** system-level dependencies
 #+BEGIN_SRC bash
-brew install postgresql tmux nvm coreutils postgrest watch jq
+brew install postgresql tmux nvm coreutils postgrest watch jq fswatch
 #+END_SRC
 ** pgjwt
 git clone https://github.com/michelp/pgjwt && cd pgjwt && sudo make install
