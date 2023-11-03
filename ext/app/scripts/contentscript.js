@@ -49,26 +49,34 @@ async function pagelogic() {
     
     const v = (await (await insert('visits',{url:location.href,w:W,h:H,proxy})).json())[0]
     chrome.runtime.sendMessage({message:'visit',visitId:v.id})
-    const profRes = new RegExp('^/users/([0-9]+)/profile$').exec(location.pathname)
-    const invRes = new RegExp('^/users/([0-9]+)/inventory/$').exec(location.pathname)
-    let profileId=null;
-    if (profRes) profileId = profRes[1];
-    if (invRes) profileId=invRes[1];
 
+    
 
     //throw new Error('unimplemented pagelogic')
     l('pathname',location.pathname);
     if (location.pathname.startsWith('/%D7%A0%D7%95%D7%A4%D7%9C%D7%99%D7%9D/'))
     {
-	l('noflim path')
-	let nxt = document.querySelector('.page-item.active')
-	if (nxt) nxt = nxt.nextElementSibling
-	if (nxt) nxt = nxt.querySelector('a')
-	l('nxt',nxt)
-	if (nxt) nxt.click()
+	const pspl = location.pathname.split('/')
+	if (pspl.length===4) // listing page
+	{
+	    let nxt = document.querySelector('.page-item.active')
+	    if (nxt) nxt = nxt.nextElementSibling
+	    if (nxt) nxt = nxt.querySelector('a')
+	    l('nxt',nxt)
+	    if (nxt) nxt.click()
+	}
 
+	else if (pspl.length===5) // personal page
+	{
+	    l('in personal page')
+	}
+	
+	const pptc = await selectOne('personal_pages_to_collect',{limit:1},true)
+	if (pptc)
+	    location.href='https://www.idf.il'+pptc.url;
+	
+	    
 	// const nxt = document.querySelector('a[rel=next]')
-
     }
 
     setTimeout(pagelogic,1000);

@@ -6,7 +6,7 @@ CREATE OR REPLACE VIEW public.parsed_pages_lst AS
     parsed_pages.ts,
     parsed_pages.req_id,
     parsed_pages.req_ts,
-    parsed_pages.purl,
+    parsed_pages.section,
     parsed_pages.page,
     parsed_pages.page_idx,
     parsed_pages.img,

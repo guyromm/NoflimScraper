@@ -16,6 +16,27 @@ npx degit git@git.webgma.co.il:ScraperStarterTemplate
 nvm use ; ./npm-init.sh
 #+END_SRC
 
+#+RESULTS:
+| *                                  | forking  | npm             | i       |         |         |           |    |      |        |     |         |
+| *                                  | waiting  |                 |         |         |         |           |    |      |        |     |         |
+| audited                            | 19       | packages        | in      | 0.847s  |         |           |    |      |        |     |         |
+|                                    |          |                 |         |         |         |           |    |      |        |     |         |
+| 10                                 | packages | are             | looking | for     | funding |           |    |      |        |     |         |
+| run                                | `npm     | fund`           | for     | details |         |           |    |      |        |     |         |
+|                                    |          |                 |         |         |         |           |    |      |        |     |         |
+| found                              | 0        | vulnerabilities |         |         |         |           |    |      |        |     |         |
+|                                    |          |                 |         |         |         |           |    |      |        |     |         |
+| /home/milez/Projects/NoflimScraper |          |                 |         |         |         |           |    |      |        |     |         |
+| audited                            | 377      | packages        | in      | 1.659s  |         |           |    |      |        |     |         |
+|                                    |          |                 |         |         |         |           |    |      |        |     |         |
+| 40                                 | packages | are             | looking | for     | funding |           |    |      |        |     |         |
+| run                                | `npm     | fund`           | for     | details |         |           |    |      |        |     |         |
+|                                    |          |                 |         |         |         |           |    |      |        |     |         |
+| found                              | 2        | vulnerabilities | (1      | high,   | 1       | critical) |    |      |        |     |         |
+| run                                | `npm     | audit           | fix`    | to      | fix     | them,     | or | `npm | audit` | for | details |
+| /home/milez/Projects/NoflimScraper |          |                 |         |         |         |           |    |      |        |     |         |
+| *                                  | all      | done!           |         |         |         |           |    |      |        |     |         |
+
 * .env
   use envs/local.tpl to create an envs/local .env shell file, and then
   expand/eval it using ./setenv.sh

@@ -6,7 +6,7 @@ CREATE TABLE public.parsed_pages (
     ts timestamp with time zone DEFAULT now(),
     req_id character varying,
     req_ts timestamp with time zone,
-    purl character varying,
+    section character varying,
     page integer,
     page_idx integer,
     img character varying,
