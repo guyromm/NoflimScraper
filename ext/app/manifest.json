@@ -38,7 +38,7 @@
     "browsingData",
     "webRequest", 
     "webRequestBlocking",
-    "https://*.gmail.com/*",
+    "https://www.idf.il/*",
     "debugger",
     "tabs",
     "proxy"

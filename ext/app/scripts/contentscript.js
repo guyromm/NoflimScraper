@@ -8,6 +8,7 @@ setConfig({authLogic:cliAuthLogic})
 
 let myItemId,reqs;
 
+
 l('adding listener.');
 chrome.runtime.onMessage.addListener(async (req,sender,sendResponse) => {
   let responseStatus = { bCalled: false };
@@ -55,11 +56,19 @@ async function pagelogic() {
     if (invRes) profileId=invRes[1];
 
 
-    throw new Error('unimplemented pagelogic')
-    if (location.pathname==='/some-url'	&& document.body)
+    //throw new Error('unimplemented pagelogic')
+    l('pathname',location.pathname);
+    if (location.pathname.startsWith('/%D7%A0%D7%95%D7%A4%D7%9C%D7%99%D7%9D/'))
     {
-	throw new Error('do something')
-	await whatsNext();
+	l('noflim path')
+	let nxt = document.querySelector('.page-item.active')
+	if (nxt) nxt = nxt.nextElementSibling
+	if (nxt) nxt = nxt.querySelector('a')
+	l('nxt',nxt)
+	if (nxt) nxt.click()
+
+	// const nxt = document.querySelector('a[rel=next]')
+
     }
 
     setTimeout(pagelogic,1000);

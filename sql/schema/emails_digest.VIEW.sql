@@ -1,7 +1,7 @@
 -- Name: emails_digest; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW public.emails_digest AS
+CREATE OR REPLACE VIEW public.emails_digest AS
  SELECT emails_parts_parse_preview.id,
     emails_parts_parse_preview.date,
     array_agg(DISTINCT emails_parts_parse_preview.mime) AS mimes,

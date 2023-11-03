@@ -1,7 +1,7 @@
 -- Name: emails_parts_parse_preview; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW public.emails_parts_parse_preview AS
+CREATE OR REPLACE VIEW public.emails_parts_parse_preview AS
  WITH a AS (
          SELECT emails.sender,
             emails.id,

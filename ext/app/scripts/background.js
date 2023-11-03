@@ -8,6 +8,7 @@ import {setConfig,
 	upsert}
 from '../../../common/postgrest-cli.js';
 import {sleep,DEBUGGER_ATTACH,whatsNext,visitNewHashtag} from './funcs.js';
+const l = console.log;
 
 setConfig({authLogic:cliAuthLogic})
 
@@ -82,6 +83,7 @@ setProxy();
 // test change 1
 
 const pat = '('+process.env.TARGET_DOMAIN+')'
+l('pat=',pat)
 const apiBaseRg = new RegExp(pat)
 
 //how to block a given type of request:
@@ -109,7 +111,6 @@ const apiBaseRg = new RegExp(pat)
 
 var version = "1.0";
 
-const l = console.log;
 
 let attached={};
 
