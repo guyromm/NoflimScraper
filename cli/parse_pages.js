@@ -81,7 +81,9 @@ async function main() {
         database: process.env.DBNAME,
     });
 
-    let res = await pool.query(`select * from r where url like '${nofUrl}%' and jsonb_typeof(v)='string' and id not in (select req_id from parsed_pages)`)
+    const rg = 'idf.il/([^/]+)/([^/]+)/(\\?page\=([0-9]+)|)$'
+    l(rg)
+    let res = await pool.query(`select * from r where url like '${nofUrl}%' and jsonb_typeof(v)='string' and id not in (select req_id from parsed_pages) and url ~* $1`,[rg])
     l(res.rows.length,'items')
     let processed=0;
     let listings=0;

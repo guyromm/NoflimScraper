@@ -50,6 +50,11 @@ echo '* creating session' && \
     echo '* mon' && \
     tnw mon && \
     tsk mon " watch -d -n60 "'"'"./psql.sh -c 'select ts::date d,count(*) from r group by d order by d desc'"'"'"" && \
+    echo '* prs' && \
+    tnw prs && \
+    tsk prs ' while (true) ; do cli/parse_pages.js ; date ; sleep 60 ; done' && \
+    tsw prs && \
+    tsk prs ' while (true) ; do cli/parse_personal_pages.js ; date ; sleep 60 ; done' && \
     ( [[ ! -z $POSTGREST_PROXY_PORT ]] && (
 	  echo '* postgrest_proxy' && \
 	      tnw pgproxy && \

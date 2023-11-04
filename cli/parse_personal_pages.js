@@ -20,7 +20,7 @@ async function parse_personal_page({pool,r})
     l('parsing personal page',r.to_parse_req_id)
     l(r.url)
     const purl = r.url.replace(nofUrl,'')
-    let section = decodeURIComponent(purl.split('/')[0])    
+    let section = decodeURIComponent(purl.split('/')[0])
     const v = r.v
     const { JSDOM } = jsdom;
     let dom;
@@ -93,6 +93,7 @@ gender,url) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,[
     r.url])
     return 1;
 }
+
 async function main() {
     l(process.env.DBNAME)
 

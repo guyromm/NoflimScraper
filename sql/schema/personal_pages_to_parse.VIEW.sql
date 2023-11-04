@@ -21,7 +21,7 @@ CREATE OR REPLACE VIEW public.personal_pages_to_parse AS
    FROM ((public.parsed_pages_lst pp
      LEFT JOIN public.r ON ((((r.url)::text = ('https://www.idf.il'::text || public.encodeuricomponentexceptslash((pp.url)::text))) AND (length((r.v ->> 0)) >= 1000))))
      LEFT JOIN public.parsed_personal_pages ppp ON (((ppp.req_id)::text = (r.id)::text)))
-  WHERE ((r.url IS NOT NULL) AND (ppp.id IS NULL))
+  WHERE ((r.url IS NOT NULL) AND (ppp.id IS NULL) AND (length((r.v ->> 0)) > 1500))
   ORDER BY pp.url, r.ts DESC;
 
 
